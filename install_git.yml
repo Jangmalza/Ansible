@@ -1,0 +1,30 @@
+---
+- name: Install Git and check version
+  hosts: ubuntu_servers
+  become: yes
+  tasks:
+
+    - name: Update package cache (Debian)
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Install Git (Debian)
+      apt:
+        name: git
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install Git (RedHat/CentOS)
+      yum:
+        name: git
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Check Git version
+      shell: git --version
+      register: git_version_output
+
+    - name: Print Git version
+      debug:
+        msg: "Git version is {{ git_version_output.stdout }}"
